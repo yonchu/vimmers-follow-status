@@ -1,0 +1,31 @@
+{
+  "name": "Vimmers follow status",
+  "version": "0.1.0",
+  "manifest_version" : 2,
+  "description": "VimmersページにTwitterのフォロー状態を表示します。",
+  "background" : {
+    "page" : "background.html"
+  },
+
+  "permissions": [
+    "http://vim-jp.org/*",
+    "https://api.twitter.com/oauth/request_token",
+    "https://api.twitter.com/oauth/authorize",
+    "https://api.twitter.com/oauth/access_token",
+    "https://api.twitter.com/1.1/*"
+  ],
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
+
+  "content_scripts": [{
+    "all_frames": false,
+    "run_at": "document_idle",
+    "matches": [
+      "http://vim-jp.org/vimmers/*"
+    ],
+    "css": ["css/vimmers.css"],
+    "js": [
+      "js/vimmers.js",
+      "js/lib/ga.js"
+    ]
+  }]
+}

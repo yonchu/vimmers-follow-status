@@ -1,0 +1,21 @@
+#status-explanation p {
+  margin: 0px;
+}
+#status-explanation > p:nth-of-type(2) > span {
+  color: #008000;
+}
+#status-explanation > p:nth-of-type(3) > span {
+  color: #ff0000;
+}
+#status-explanation > p:nth-of-type(4) > span {
+  color: #0000ff;
+}
+.persons .person.status-following {
+  border: 2.5px solid #008000;
+}
+.persons .person.status-followed {
+  border: 2.5px solid #ff0000;
+}
+.persons .person.status-both {
+  border: 2.5px solid #0000ff;
+}
