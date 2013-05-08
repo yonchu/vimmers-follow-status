@@ -3,7 +3,7 @@ Vimmers follow status
 
 This source code is for [Google Chrome Extension](http://code.google.com/chrome/extensions/index.html) "Vimmers follow status".
 
-- [Chrome ウェブストア - Vimmers follow status](https://chrome.google.com/webstore/detail/%E3%83%8B%E3%82%B3%E7%94%9F%E3%82%A2%E3%83%AA%E3%83%BC%E3%83%8A/lkkpfmnibpgpmhbkjgldlmonaphmoobl)
+- [Chrome ウェブストア - Vimmers follow status](https://chrome.google.com/webstore/detail/vimmers-follow-status/iiliknkabfelbmgbgcihfnhokakghbfi)
 
 ![screenshot01](https://raw.github.com/yonchu/vimmers-follow-status/master/img/screenshot01.png)
 
@@ -73,7 +73,7 @@ Vimmersページへアクセスし、"Show All!"ボタンを押下すると動�
 
 ## 変更履歴
 
-- 2013/05/08 v0.1.0 リリース
+- 2013/05/08  v0.1.0 リリース
 
 
 ## See also
