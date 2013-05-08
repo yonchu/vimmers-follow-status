@@ -36,7 +36,7 @@
     Vimmers.prototype.persons = null;
 
     function Vimmers() {
-      console.log('Run renderFollowStatus');
+      console.log('Run Vimmers.');
       this.addEventListeners();
     }
 
@@ -50,35 +50,11 @@
       }, false);
     };
 
-    Vimmers.prototype.updateStatus = function(isFollowing, isFollowed) {
-      var className;
-
-      className = null;
-      if (isFollowing && isFollowed) {
-        this.status.both.count += 1;
-        className = this.status.both.className;
-      } else if (isFollowing) {
-        this.status.following.count += 1;
-        className = this.status.following.className;
-      } else if (isFollowed) {
-        this.status.followed.count += 1;
-        className = this.status.followed.className;
-      } else {
-        this.status.none.count += 1;
-        className = this.status.none.className;
-      }
-      return className;
-    };
-
     Vimmers.prototype.init = function() {
       var names, namesList, _i, _len;
 
       this.persons = document.querySelectorAll('.persons .person');
       console.log("Total vimmers: " + this.persons.length);
-      if (this.friendships) {
-        this.renderFollowStatus();
-        return;
-      }
       namesList = this.getScreenNmaesList();
       for (_i = 0, _len = namesList.length; _i < _len; _i++) {
         names = namesList[_i];
@@ -95,7 +71,7 @@
       _ref = this.persons;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         person = _ref[_i];
-        if (names.length > Vimmers.MAX_NAME_COUNT_PER_REQUEST) {
+        if (names.length >= Vimmers.MAX_NAME_COUNT_PER_REQUEST) {
           names = [];
           namesList.push(names);
         }
@@ -108,6 +84,13 @@
       return namesList;
     };
 
+    Vimmers.prototype.getScreenNmae = function(person) {
+      var href, _ref, _ref1;
+
+      href = (_ref = person.querySelectorAll('.link a')[0]) != null ? _ref.getAttribute('href') : void 0;
+      return (_ref1 = href.match(/twitter\.com\/(.*)/)) != null ? _ref1[1] : void 0;
+    };
+
     Vimmers.prototype.fetchFollowStatus = function(screenNames) {
       var request, url,
         _this = this;
@@ -115,8 +98,8 @@
       this.fetchCount += 1;
       url = Vimmers.FRIENDSHIPS_LOOKUP_URL;
       request = {
+        method: 'GET',
         parameters: {
-          method: 'GET',
           screen_name: screenNames.join(',')
         }
       };
@@ -142,16 +125,14 @@
         if (_this.fetchCount) {
           return;
         }
-        return _this.renderFollowStatus();
+        _this.renderFollowStatus();
+        return _this.renderExplanation();
       });
     };
 
     Vimmers.prototype.renderFollowStatus = function() {
-      var bothCount, className, connections, followedCount, followingCount, friendship, isFollowed, isFollowing, name, person, _i, _len, _ref;
+      var className, connections, friendship, isFollowed, isFollowing, name, person, _i, _len, _ref;
 
-      bothCount = 0;
-      followingCount = 0;
-      followedCount = 0;
       _ref = this.persons;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         person = _ref[_i];
@@ -170,14 +151,26 @@
         className = this.updateStatus(isFollowing, isFollowed);
         person.className += " " + className;
       }
-      this.renderExplanation();
     };
 
-    Vimmers.prototype.getScreenNmae = function(person) {
-      var href, _ref, _ref1;
+    Vimmers.prototype.updateStatus = function(isFollowing, isFollowed) {
+      var className;
 
-      href = (_ref = person.querySelectorAll('.link a')[0]) != null ? _ref.getAttribute('href') : void 0;
-      return (_ref1 = href.match(/twitter\.com\/(.*)/)) != null ? _ref1[1] : void 0;
+      className = null;
+      if (isFollowing && isFollowed) {
+        this.status.both.count += 1;
+        className = this.status.both.className;
+      } else if (isFollowing) {
+        this.status.following.count += 1;
+        className = this.status.following.className;
+      } else if (isFollowed) {
+        this.status.followed.count += 1;
+        className = this.status.followed.className;
+      } else {
+        this.status.none.count += 1;
+        className = this.status.none.className;
+      }
+      return className;
     };
 
     Vimmers.prototype.renderExplanation = function() {

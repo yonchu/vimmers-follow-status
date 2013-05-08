@@ -2,32 +2,41 @@ class Background
   commands:
     'twitter': null
 
-  constructor: (@twitter)->
-    @commands.twitter = @twitter
+  constructor: (twitterCommands)->
+    @commands.twitter = twitterCommands
     @addEventListeners()
 
   addEventListeners: ->
     chrome.extension.onRequest.addListener (message, sender, sendResponse) =>
       target = @commands[message.target]
       unless target
-        throw new Error "Invalid target #{message.target}"
+        throw new Error "Invalid target #{message.target}", @commands
       args = message.args
       args.push sendResponse
       res = target[message.action].apply target, args
       if res
         sendResponse res: res
-      target = null
+    return
+
+
+class TwitterCommands
+  constructor: ->
+
+  sendSignedRequest: (url, request, sendResponse) ->
+    tw = new Twitter sendResponse
+    tw.sendSignedRequest url, request
     return
 
 
 class Twitter
-  oauth: null
+  _oauth: null
+  _authorizedCallback: null
 
-  constructor: ->
+  constructor: (@_sendResponse) ->
 
-  authorize: (callback) ->
+  _authorize: ->
     console.log 'Run authorizing.'
-    @oauth = ChromeExOAuth.initBackgroundPage(
+    @_oauth = ChromeExOAuth.initBackgroundPage(
       request_url: 'https://api.twitter.com/oauth/request_token'
       authorize_url: 'https://api.twitter.com/oauth/authorize'
       access_url: 'https://api.twitter.com/oauth/access_token'
@@ -36,44 +45,40 @@ class Twitter
       scope: 'https://api.twitter.com/1.1/'
       app_name: 'vimmers_folow_status'
     )
-    @oauth.authorize (@onAuthorized callback)
-    callback = null
+    @_oauth.authorize @_onAuthorized
     return
 
-  onAuthorized: (callback) ->
-    return =>
-      console.log 'Authorize successfully.'
-      callback.call @
-      callback = null
+  _onAuthorized: =>
+    console.log 'Authorized successfully.'
+    @_authorizedCallback?.call @
+    @_authorizedCallback = null
     return
 
-  sendSignedRequest: (url, request, sendResponse) ->
-    @authorize =>
+  sendSignedRequest: (url, request) ->
+    @_authorizedCallback = =>
       console.log 'Call onAuthoried callback', url, request
-      @oauth.sendSignedRequest(
+      @_oauth.sendSignedRequest(
         url,
-        (@onSendSignedRequest sendResponse),
+        @_onSendSignedRequest,
         request
       )
       url = null
       request = null
-      sendResponse = null
       return
+    @_authorize()
     return
 
-  onSendSignedRequest: (sendResponse) ->
-    return (response, xhr) =>
-      response = JSON.parse response
-      console.log 'Response of sendSignedRequest', response
-      if response.errors?[0].code is 89
-        @removeOauthToken()
-        console.log localStorage
-        response = null
-      sendResponse res: response
-      sendResponse = null
-      return
+  _onSendSignedRequest: (response, xhr) =>
+    resJson = JSON.parse response
+    console.log 'Response of sendSignedRequest', resJson
+    if resJson.errors?[0].code is 89
+      @_removeOauthToken()
+      console.log localStorage
+      resJson = null
+    @_sendResponse res: resJson
+    return
 
-  removeOauthToken: ->
+  _removeOauthToken: ->
     console.log 'Remove oath access token.'
     localStorage.removeItem 'oauth_tokenhttps://api.twitter.com/1.1/'
     localStorage.removeItem 'oauth_token_secrethttps://api.twitter.com/1.1/'
@@ -82,4 +87,4 @@ class Twitter
 
 ## Main
 exports = exports ? window ? @
-exports.bg = new Background (new Twitter)
+exports.bg = new Background (new TwitterCommands)

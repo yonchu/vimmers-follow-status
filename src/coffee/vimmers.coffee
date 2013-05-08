@@ -25,7 +25,7 @@ class Vimmers
   persons: null
 
   constructor: () ->
-    console.log 'Run renderFollowStatus'
+    console.log 'Run Vimmers.'
     @addEventListeners()
 
   addEventListeners: ->
@@ -39,28 +39,9 @@ class Vimmers
       , false)
     return
 
-  updateStatus: (isFollowing, isFollowed) ->
-    className = null
-    if isFollowing and isFollowed
-      @status.both.count += 1
-      className = @status.both.className
-    else if isFollowing
-      @status.following.count += 1
-      className = @status.following.className
-    else if isFollowed
-      @status.followed.count += 1
-      className = @status.followed.className
-    else
-      @status.none.count += 1
-      className = @status.none.className
-    return className
-
   init: ->
     @persons = document.querySelectorAll('.persons .person')
     console.log "Total vimmers: #{@persons.length}"
-    if @friendships
-      @renderFollowStatus()
-      return
     namesList = @getScreenNmaesList()
     for names in namesList
       @fetchFollowStatus names
@@ -71,7 +52,7 @@ class Vimmers
     names = []
     namesList.push names
     for person in @persons
-      if names.length > Vimmers.MAX_NAME_COUNT_PER_REQUEST
+      if names.length >= Vimmers.MAX_NAME_COUNT_PER_REQUEST
         names = []
         namesList.push names
       name = @getScreenNmae person
@@ -79,12 +60,16 @@ class Vimmers
       names.push name
     return namesList
 
+  getScreenNmae: (person) ->
+    href = person.querySelectorAll('.link a')[0]?.getAttribute('href')
+    return href.match(/twitter\.com\/(.*)/)?[1]
+
   fetchFollowStatus: (screenNames) ->
     @fetchCount += 1
     url = Vimmers.FRIENDSHIPS_LOOKUP_URL
     request =
+      method: 'GET',
       parameters:
-        method: 'GET',
         screen_name: screenNames.join ','
     chrome.extension.sendRequest({
         'target' : 'twitter',
@@ -102,13 +87,11 @@ class Vimmers
         if @fetchCount
           return
         @renderFollowStatus()
+        @renderExplanation()
     )
     return
 
   renderFollowStatus: ->
-    bothCount = 0
-    followingCount = 0
-    followedCount = 0
     for person in @persons
       name = @getScreenNmae person
       continue unless name
@@ -121,12 +104,23 @@ class Vimmers
       isFollowed = 'followed_by' in connections
       className = @updateStatus isFollowing, isFollowed
       person.className += " #{className}"
-    @renderExplanation()
     return
 
-  getScreenNmae: (person) ->
-    href = person.querySelectorAll('.link a')[0]?.getAttribute('href')
-    return href.match(/twitter\.com\/(.*)/)?[1]
+  updateStatus: (isFollowing, isFollowed) ->
+    className = null
+    if isFollowing and isFollowed
+      @status.both.count += 1
+      className = @status.both.className
+    else if isFollowing
+      @status.following.count += 1
+      className = @status.following.className
+    else if isFollowed
+      @status.followed.count += 1
+      className = @status.followed.className
+    else
+      @status.none.count += 1
+      className = @status.none.className
+    return className
 
   renderExplanation: ->
     total = "<p>Total: #{@persons.length}</p>"
@@ -146,6 +140,7 @@ class Vimmers
       div = document.getElementById 'status-explanation'
     div.innerHTML = total + followingExp + followedExp + bothExp
     return
+
 
 ## Main
 vimmers = new Vimmers
