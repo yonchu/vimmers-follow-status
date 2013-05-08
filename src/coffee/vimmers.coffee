@@ -1,7 +1,6 @@
 class Vimmers
   @FRIENDSHIPS_LOOKUP_URL: 'https://api.twitter.com/1.1/friendships/lookup.json'
   @MAX_NAME_COUNT_PER_REQUEST: 100
-  @EXPLANATION_MARK: '●'
 
   status:
     both:
@@ -124,12 +123,9 @@ class Vimmers
 
   renderExplanation: ->
     total = "<p>Total: #{@persons.length}</p>"
-    followingExp = "<p><span>#{Vimmers.EXPLANATION_MARK}</span>" \
-      + " : Following only (#{@status.following.count})</p>"
-    followedExp = "<p><span>#{Vimmers.EXPLANATION_MARK}</span>" \
-      + " : Followed only (#{@status.followed.count})</p>"
-    bothExp = "<p><span>#{Vimmers.EXPLANATION_MARK}</span>" \
-      + " : Both (#{@status.both.count})</p>"
+    followingExp = "<p>Following only: #{@status.following.count}</p>"
+    followedExp = "<p>Followed only: #{@status.followed.count}</p>"
+    bothExp = "<p>Both: #{@status.both.count}</p>"
     div = document.getElementById 'status-explanation'
     unless div
       div = document.createElement 'div'

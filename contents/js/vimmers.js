@@ -8,8 +8,6 @@
 
     Vimmers.MAX_NAME_COUNT_PER_REQUEST = 100;
 
-    Vimmers.EXPLANATION_MARK = '●';
-
     Vimmers.prototype.status = {
       both: {
         className: 'status-both',
@@ -177,9 +175,9 @@
       var bothExp, div, followedExp, followingExp, parent, pos, total;
 
       total = "<p>Total: " + this.persons.length + "</p>";
-      followingExp = ("<p><span>" + Vimmers.EXPLANATION_MARK + "</span>") + (" : Following only (" + this.status.following.count + ")</p>");
-      followedExp = ("<p><span>" + Vimmers.EXPLANATION_MARK + "</span>") + (" : Followed only (" + this.status.followed.count + ")</p>");
-      bothExp = ("<p><span>" + Vimmers.EXPLANATION_MARK + "</span>") + (" : Both (" + this.status.both.count + ")</p>");
+      followingExp = "<p>Following only: " + this.status.following.count + "</p>";
+      followedExp = "<p>Followed only: " + this.status.followed.count + "</p>";
+      bothExp = "<p>Both: " + this.status.both.count + "</p>";
       div = document.getElementById('status-explanation');
       if (!div) {
         div = document.createElement('div');
