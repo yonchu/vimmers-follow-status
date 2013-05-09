@@ -7,7 +7,7 @@
     "scripts": [
       "js/lib/chrome_ex_oauthsimple.js",
       "js/lib/chrome_ex_oauth.js",
-      "js/background.js",
+      "js/eventPage.js",
       "js/lib/ga.js"
     ],
     "persistent": false
