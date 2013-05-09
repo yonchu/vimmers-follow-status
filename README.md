@@ -82,3 +82,8 @@ Vimmersページへアクセスし、"Show All!"ボタンを押下すると動�
 ソースコードは以下にて、MITライセンスの元公開しています。
 
 - [yonchu/vimmers-follow-status](https://github.com/yonchu/vimmers-follow-status)
+
+アイコンを [syui](https://twitter.com/PSP_T)さん に作成して頂きました。
+ありがとうございます。
+
+- [MBA-HACK: 「Vimmers follow status」アイコン](http://mba-hack.blogspot.jp/2013/05/class-src-width-height-alt-air-software.html)
