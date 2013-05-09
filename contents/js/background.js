@@ -16,21 +16,27 @@
     Background.prototype.addEventListeners = function() {
       var _this = this;
 
-      chrome.extension.onRequest.addListener(function(message, sender, sendResponse) {
+      chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         var args, res, target;
 
-        target = _this.commands[message.target];
-        if (!target) {
-          throw new Error("Invalid target " + message.target, _this.commands);
+        if (sender.tab) {
+          console.log("from a content script: " + sender.tab.url);
+        } else {
+          console.log("from the extension");
         }
-        args = message.args;
+        target = _this.commands[request.target];
+        if (!target) {
+          throw new Error("Invalid target " + request.target, _this.commands);
+        }
+        args = request.args;
         args.push(sendResponse);
-        res = target[message.action].apply(target, args);
+        res = target[request.action].apply(target, args);
         if (res) {
-          return sendResponse({
+          sendResponse({
             res: res
           });
         }
+        return true;
       });
     };
 

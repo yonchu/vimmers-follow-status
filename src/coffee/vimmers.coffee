@@ -70,7 +70,7 @@ class Vimmers
       method: 'GET',
       parameters:
         screen_name: screenNames.join ','
-    chrome.extension.sendRequest({
+    chrome.runtime.sendMessage({
         'target' : 'twitter',
         'action' : 'sendSignedRequest',
         'args'   : [url, request]
