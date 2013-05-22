@@ -18,7 +18,7 @@ class Vimmers
 
   fetchCount: 0
 
-  friendships: null
+  friendships: []
 
   # DOM
   persons: null
@@ -30,20 +30,17 @@ class Vimmers
   addEventListeners: ->
     document.getElementById('vimmers-showall')
       .addEventListener('click',  (event) =>
-        setTimeout(=>
-          @init()
-          return
-        , 1 * 1000)
+        # Function.bind supported only from ES5.
+        setTimeout (@showFollowStatus.bind @) , 1 * 1000
         return
       , false)
     return
 
-  init: ->
+  showFollowStatus: ->
     @persons = document.querySelectorAll('.persons .person')
     console.log "Total vimmers: #{@persons.length}"
     namesList = @getScreenNmaesList()
-    for names in namesList
-      @fetchFollowStatus names
+    @fetchFollowStatus namesList
     return
 
   getScreenNmaesList: ->
@@ -63,31 +60,37 @@ class Vimmers
     href = person.querySelectorAll('.link a')[0]?.getAttribute('href')
     return href.match(/twitter\.com\/(.*)/)?[1]
 
-  fetchFollowStatus: (screenNames) ->
-    @fetchCount += 1
+  fetchFollowStatus: (namesList) ->
     url = Vimmers.FRIENDSHIPS_LOOKUP_URL
     request =
       method: 'GET',
       parameters:
-        screen_name: screenNames.join ','
-    chrome.runtime.sendMessage({
-        'target' : 'twitter',
-        'action' : 'sendSignedRequest',
-        'args'   : [url, request]
-      }, (response) =>
-        console.log 'Follow status: ', response
-        @fetchCount -= 1
-        unless response.res
-          console.log 'Fetch follow status: no results.'
-          return
-        @friendships or= {}
-        for friendship in response.res
-          @friendships[friendship.screen_name] = friendship
-        if @fetchCount
-          return
+        screen_name: null
+    sendMessageParam =
+      'target' : 'twitter',
+      'action' : 'sendSignedRequest',
+      'args'   : [url, request]
+    length = namesList.length
+
+    tryNextFetch = (index) =>
+      if index >= length
+        console.log "All fetch finished!"
         @renderFollowStatus()
         @renderExplanation()
-    )
+        return
+      console.log "Try fetch #{index}"
+      request.parameters.screen_name = namesList[index].join ','
+      chrome.runtime.sendMessage sendMessageParam, (response) =>
+        console.log 'Follow status: ', response
+        unless response.res
+          alert 'フォロー状態の取得に失敗しました'
+          return
+        for friendship in response.res
+          @friendships[friendship.screen_name] = friendship
+        tryNextFetch index + 1
+        return
+      return
+    tryNextFetch 0
     return
 
   renderFollowStatus: ->

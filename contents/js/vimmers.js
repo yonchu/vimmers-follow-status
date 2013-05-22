@@ -29,7 +29,7 @@
 
     Vimmers.prototype.fetchCount = 0;
 
-    Vimmers.prototype.friendships = null;
+    Vimmers.prototype.friendships = [];
 
     Vimmers.prototype.persons = null;
 
@@ -42,22 +42,17 @@
       var _this = this;
 
       document.getElementById('vimmers-showall').addEventListener('click', function(event) {
-        setTimeout(function() {
-          _this.init();
-        }, 1 * 1000);
+        setTimeout(_this.showFollowStatus.bind(_this), 1 * 1000);
       }, false);
     };
 
-    Vimmers.prototype.init = function() {
-      var names, namesList, _i, _len;
+    Vimmers.prototype.showFollowStatus = function() {
+      var namesList;
 
       this.persons = document.querySelectorAll('.persons .person');
       console.log("Total vimmers: " + this.persons.length);
       namesList = this.getScreenNmaesList();
-      for (_i = 0, _len = namesList.length; _i < _len; _i++) {
-        names = namesList[_i];
-        this.fetchFollowStatus(names);
-      }
+      this.fetchFollowStatus(namesList);
     };
 
     Vimmers.prototype.getScreenNmaesList = function() {
@@ -89,43 +84,49 @@
       return (_ref1 = href.match(/twitter\.com\/(.*)/)) != null ? _ref1[1] : void 0;
     };
 
-    Vimmers.prototype.fetchFollowStatus = function(screenNames) {
-      var request, url,
+    Vimmers.prototype.fetchFollowStatus = function(namesList) {
+      var length, request, sendMessageParam, tryNextFetch, url,
         _this = this;
 
-      this.fetchCount += 1;
       url = Vimmers.FRIENDSHIPS_LOOKUP_URL;
       request = {
         method: 'GET',
         parameters: {
-          screen_name: screenNames.join(',')
+          screen_name: null
         }
       };
-      chrome.runtime.sendMessage({
+      sendMessageParam = {
         'target': 'twitter',
         'action': 'sendSignedRequest',
         'args': [url, request]
-      }, function(response) {
-        var friendship, _i, _len, _ref;
+      };
+      length = namesList.length;
+      tryNextFetch = function(index) {
+        if (index >= length) {
+          console.log("All fetch finished!");
+          _this.renderFollowStatus();
+          _this.renderExplanation();
+          return;
+        }
+        console.log("Try fetch " + index);
+        request.parameters.screen_name = namesList[index].join(',');
+        chrome.runtime.sendMessage(sendMessageParam, function(response) {
+          var friendship, _i, _len, _ref;
 
-        console.log('Follow status: ', response);
-        _this.fetchCount -= 1;
-        if (!response.res) {
-          console.log('Fetch follow status: no results.');
-          return;
-        }
-        _this.friendships || (_this.friendships = {});
-        _ref = response.res;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          friendship = _ref[_i];
-          _this.friendships[friendship.screen_name] = friendship;
-        }
-        if (_this.fetchCount) {
-          return;
-        }
-        _this.renderFollowStatus();
-        return _this.renderExplanation();
-      });
+          console.log('Follow status: ', response);
+          if (!response.res) {
+            alert('フォロー状態の取得に失敗しました');
+            return;
+          }
+          _ref = response.res;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            friendship = _ref[_i];
+            _this.friendships[friendship.screen_name] = friendship;
+          }
+          tryNextFetch(index + 1);
+        });
+      };
+      tryNextFetch(0);
     };
 
     Vimmers.prototype.renderFollowStatus = function() {
