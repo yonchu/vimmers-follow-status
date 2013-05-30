@@ -1,9 +1,5 @@
 class Background
-  commands:
-    'twitter': null
-
-  constructor: (twitterCommands) ->
-    @commands.twitter = twitterCommands
+  constructor: (@commands) ->
     @addEventListeners()
 
   addEventListeners: ->
@@ -14,7 +10,7 @@ class Background
         console.log "from the extension"
       target = @commands[request.target]
       unless target
-        throw new Error "Invalid target #{request.target}", @commands
+        throw Error "Invalid target #{request.target}", @commands
       args = request.args
       args.push sendResponse
       res = target[request.action].apply target, args
@@ -59,8 +55,9 @@ class Twitter
   sendSignedRequest: (url, onsuccess, request) ->
     @authorize (oauth) =>
       # Note Function.bind supported only from ES5.
-      oauth.sendSignedRequest(url,
-        (@_onSendSignedRequest.bind @, onsuccess),
+      oauth.sendSignedRequest(
+        url,
+        @_onSendSignedRequest.bind(@, onsuccess),
         request
       )
       return
@@ -84,4 +81,6 @@ class Twitter
 
 ## Main
 exports = exports ? window ? @
-exports.bg = new Background (new TwitterCommands)
+exports.bg = new Background(
+  twitter: new TwitterCommands
+)

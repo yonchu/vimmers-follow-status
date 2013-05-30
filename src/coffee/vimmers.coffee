@@ -23,7 +23,7 @@ class Vimmers
   # DOM
   persons: null
 
-  constructor: () ->
+  constructor: ->
     console.log 'Run Vimmers.'
     @addEventListeners()
 
@@ -31,13 +31,13 @@ class Vimmers
     document.getElementById('vimmers-showall')
       .addEventListener('click',  (event) =>
         # Function.bind supported only from ES5.
-        setTimeout (@showFollowStatus.bind @) , 1 * 1000
+        setTimeout @showFollowStatus.bind(@), 1 * 1000
         return
       , false)
     return
 
   showFollowStatus: ->
-    @persons = document.querySelectorAll('.persons .person')
+    @persons = document.querySelectorAll '.persons .person'
     console.log "Total vimmers: #{@persons.length}"
     namesList = @getScreenNmaesList()
     @fetchFollowStatus namesList
@@ -57,7 +57,7 @@ class Vimmers
     return namesList
 
   getScreenNmae: (person) ->
-    href = person.querySelectorAll('.link a')[0]?.getAttribute('href')
+    href = person.querySelector('.link a')?.getAttribute 'href'
     return href.match(/twitter\.com\/(.*)/)?[1]
 
   fetchFollowStatus: (namesList) ->
@@ -67,9 +67,9 @@ class Vimmers
       parameters:
         screen_name: null
     sendMessageParam =
-      'target' : 'twitter',
-      'action' : 'sendSignedRequest',
-      'args'   : [url, request]
+      target: 'twitter',
+      action: 'sendSignedRequest',
+      args  : [url, request]
     length = namesList.length
 
     tryNextFetch = (index) =>
@@ -109,7 +109,7 @@ class Vimmers
     return
 
   updateStatus: (isFollowing, isFollowed) ->
-    className = null
+    className = ''
     if isFollowing and isFollowed
       @status.both.count += 1
       className = @status.both.className
@@ -129,15 +129,11 @@ class Vimmers
     followingExp = "<p>Following only: #{@status.following.count}</p>"
     followedExp = "<p>Followed only: #{@status.followed.count}</p>"
     bothExp = "<p>Both: #{@status.both.count}</p>"
-    div = document.getElementById 'status-explanation'
-    unless div
-      div = document.createElement 'div'
-      div.id = 'status-explanation'
-      pos = document.querySelector('.vimmers-controls')
-      parent = pos.parentNode
-      parent.insertBefore div, pos
-      div = document.getElementById 'status-explanation'
+    div = document.createElement 'div'
+    div.id = 'status-explanation'
     div.innerHTML = total + followingExp + followedExp + bothExp
+    pos = document.querySelector('.vimmers-controls')
+    pos.parentNode.insertBefore div, pos
     return
 
 

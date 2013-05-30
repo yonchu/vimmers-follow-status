@@ -3,12 +3,8 @@
   var Background, Twitter, TwitterCommands, exports, _ref;
 
   Background = (function() {
-    Background.prototype.commands = {
-      'twitter': null
-    };
-
-    function Background(twitterCommands) {
-      this.commands.twitter = twitterCommands;
+    function Background(commands) {
+      this.commands = commands;
       this.addEventListeners();
     }
 
@@ -25,7 +21,7 @@
         }
         target = _this.commands[request.target];
         if (!target) {
-          throw new Error("Invalid target " + request.target, _this.commands);
+          throw Error("Invalid target " + request.target, _this.commands);
         }
         args = request.args;
         args.push(sendResponse);
@@ -116,6 +112,8 @@
 
   exports = (_ref = exports != null ? exports : window) != null ? _ref : this;
 
-  exports.bg = new Background(new TwitterCommands);
+  exports.bg = new Background({
+    twitter: new TwitterCommands
+  });
 
 }).call(this);

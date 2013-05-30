@@ -80,7 +80,7 @@
     Vimmers.prototype.getScreenNmae = function(person) {
       var href, _ref, _ref1;
 
-      href = (_ref = person.querySelectorAll('.link a')[0]) != null ? _ref.getAttribute('href') : void 0;
+      href = (_ref = person.querySelector('.link a')) != null ? _ref.getAttribute('href') : void 0;
       return (_ref1 = href.match(/twitter\.com\/(.*)/)) != null ? _ref1[1] : void 0;
     };
 
@@ -96,9 +96,9 @@
         }
       };
       sendMessageParam = {
-        'target': 'twitter',
-        'action': 'sendSignedRequest',
-        'args': [url, request]
+        target: 'twitter',
+        action: 'sendSignedRequest',
+        args: [url, request]
       };
       length = namesList.length;
       tryNextFetch = function(index) {
@@ -155,7 +155,7 @@
     Vimmers.prototype.updateStatus = function(isFollowing, isFollowed) {
       var className;
 
-      className = null;
+      className = '';
       if (isFollowing && isFollowed) {
         this.status.both.count += 1;
         className = this.status.both.className;
@@ -173,22 +173,17 @@
     };
 
     Vimmers.prototype.renderExplanation = function() {
-      var bothExp, div, followedExp, followingExp, parent, pos, total;
+      var bothExp, div, followedExp, followingExp, pos, total;
 
       total = "<p>Total: " + this.persons.length + "</p>";
       followingExp = "<p>Following only: " + this.status.following.count + "</p>";
       followedExp = "<p>Followed only: " + this.status.followed.count + "</p>";
       bothExp = "<p>Both: " + this.status.both.count + "</p>";
-      div = document.getElementById('status-explanation');
-      if (!div) {
-        div = document.createElement('div');
-        div.id = 'status-explanation';
-        pos = document.querySelector('.vimmers-controls');
-        parent = pos.parentNode;
-        parent.insertBefore(div, pos);
-        div = document.getElementById('status-explanation');
-      }
+      div = document.createElement('div');
+      div.id = 'status-explanation';
       div.innerHTML = total + followingExp + followedExp + bothExp;
+      pos = document.querySelector('.vimmers-controls');
+      pos.parentNode.insertBefore(div, pos);
     };
 
     return Vimmers;
