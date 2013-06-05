@@ -8,33 +8,29 @@
 
     Vimmers.MAX_NAME_COUNT_PER_REQUEST = 100;
 
-    Vimmers.prototype.status = {
-      both: {
-        className: 'status-both',
-        count: 0
-      },
-      following: {
-        className: 'status-following',
-        count: 0
-      },
-      followed: {
-        clssName: 'status-followed',
-        count: 0
-      },
-      none: {
-        className: 'status-none',
-        count: 0
-      }
-    };
-
-    Vimmers.prototype.fetchCount = 0;
-
-    Vimmers.prototype.friendships = [];
-
-    Vimmers.prototype.persons = null;
-
     function Vimmers() {
       console.log('Run Vimmers.');
+      this.fetchCount = 0;
+      this.friendships = [];
+      this.persons = null;
+      this.status = {
+        both: {
+          className: 'status-both',
+          count: 0
+        },
+        following: {
+          className: 'status-following',
+          count: 0
+        },
+        followed: {
+          clssName: 'status-followed',
+          count: 0
+        },
+        none: {
+          className: 'status-none',
+          count: 0
+        }
+      };
       this.addEventListeners();
     }
 

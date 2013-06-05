@@ -2,29 +2,28 @@ class Vimmers
   @FRIENDSHIPS_LOOKUP_URL: 'https://api.twitter.com/1.1/friendships/lookup.json'
   @MAX_NAME_COUNT_PER_REQUEST: 100
 
-  status:
-    both:
-      className: 'status-both'
-      count: 0
-    following:
-      className: 'status-following'
-      count: 0
-    followed:
-      clssName: 'status-followed'
-      count: 0
-    none:
-      className: 'status-none'
-      count: 0
-
-  fetchCount: 0
-
-  friendships: []
-
-  # DOM
-  persons: null
-
   constructor: ->
     console.log 'Run Vimmers.'
+
+    @fetchCount = 0
+    @friendships = []
+    # DOM
+    @persons = null
+
+    @status =
+      both:
+        className: 'status-both'
+        count: 0
+      following:
+        className: 'status-following'
+        count: 0
+      followed:
+        clssName: 'status-followed'
+        count: 0
+      none:
+        className: 'status-none'
+        count: 0
+
     @addEventListeners()
 
   addEventListeners: ->
