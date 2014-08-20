@@ -20,10 +20,12 @@
   },
 
   "web_accessible_resources": [
-    "icons/48.png"
+    "icons/48.png",
+    "chrome_ex_oauth.html"
   ],
 
   "permissions": [
+    "tabs",
     "http://vim-jp.org/*",
     "https://api.twitter.com/oauth/request_token",
     "https://api.twitter.com/oauth/authorize",
