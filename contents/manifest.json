@@ -8,7 +8,7 @@
       "js/lib/chrome_ex_oauthsimple.js",
       "js/lib/chrome_ex_oauth.js",
       "js/eventPage.js",
-      "js/lib/ga.js"
+      "js/lib/analytics.js"
     ],
     "persistent": false
   },
@@ -43,7 +43,7 @@
     "css": ["css/vimmers.css"],
     "js": [
       "js/vimmers.js",
-      "js/lib/ga.js"
+      "js/lib/analytics.js"
     ]
   }]
 }
