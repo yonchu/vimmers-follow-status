@@ -57,7 +57,7 @@ Upload release.zip to Web store and write change log in explanations.
 
 ## Copyright
 
-Copyright (c) 2013 Yonchu.
+Copyright (c) 2013-2014 Yonchu.
 
 
 Web Store の説明
@@ -78,6 +78,7 @@ Vimmersページへアクセスし、"Show All!"ボタンを押下すると動�
 - 2013/05/09  v0.1.2 アイコンを追加
 - 2013/05/22  v0.1.3 アプリ承認画面が複数回表示されてしまう問題を修正
 - 2014/08/20  v0.1.4 Twitter認証が正常に行えない問題を修正
+- 2014/09/04  v0.1.5 Google Analytics の更新
 
 
 ## See also
